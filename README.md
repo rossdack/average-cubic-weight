@@ -9,8 +9,7 @@ npm install
 ```sh
 npm start
 ``` 
+For a simple jQuery-based solution, load src/simplejq.html into your browser
 
 ## To test (jest)
-```sh
-npm run test
-``` 
+No tests included.
