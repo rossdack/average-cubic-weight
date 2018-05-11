@@ -111,8 +111,8 @@ class App extends Component {
                 <ul>
                     For <b>{requiredItemType}</b>:
                     <li>Total number of items: {this.state.numRequiredItems}</li>
-                    <li>Total actual weight: {this.state.totalActualWeight} Kg</li>
-                    <li>Total cubic weight: {this.state.totalCubicWeight.toFixed(2)} Kg</li>
+                    <li>Total actual weight: {this.state.totalActualWeight} g</li>
+                    <li>Total cubic weight: {this.state.totalCubicWeight.toFixed(2)} g</li>
                     <li>Average cubic
                         weight: {(this.state.totalCubicWeight / this.state.numRequiredItems).toFixed(2)} Kg
                     </li>
