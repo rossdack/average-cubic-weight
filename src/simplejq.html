@@ -1,0 +1,95 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        /**
+         * average cubic weight challenge
+         * ross dack 11/05/2018
+         **/
+
+        const chosenCategory = 'Air Conditioners';
+        const restEndpoint = 'http://wp8m3he1wt.s3-website-ap-southeast-2.amazonaws.com';
+        const cubicWeightFactor = 250;
+        let pageIdentifer = '/api/products/1';
+
+        let grandTotalItems = 0;
+        let totalCategoryItems = 0;
+        let totalCategoryWeight = 0;
+        let totalCategoryCubicWeight = 0;
+
+        function init() {
+            this.performCall(pageIdentifer);
+        }
+
+        function performCall(page) {
+            console.log('fetching for page', page);
+            var self = this;
+            $.ajax({
+                url: restEndpoint + page,
+                context: self,
+                success: _success,
+                failure: function (err) {
+                    console.err('Something went wrong', err);
+                }
+            })
+        }
+
+        /**
+         * Assuming dimensions in cm
+         * @param productSpec
+         * @returns {number}
+         */
+        function _calculateCubicWeight(productSpec) {
+            return ((productSpec.width / 100) *
+                (productSpec.length / 100) *
+                (productSpec.height / 100)) *
+                cubicWeightFactor;
+        }
+
+        /**
+         * Success handler
+         * @param data
+         * @private
+         */
+        function _success(data) {
+            grandTotalItems += data.objects.length;
+
+            let filteredItems = data.objects.filter(function (item) {
+                return item.category === chosenCategory;
+            });
+
+            filteredItems.forEach(function (item) {
+                totalCategoryItems++;
+                totalCategoryWeight += item.weight;
+                totalCategoryCubicWeight += _calculateCubicWeight(item.size);
+            });
+            if (data.next) {
+                this.performCall(data.next);
+            } else {
+                $('#grandTotal').text(grandTotalItems);
+                $('#totalCategoryItems').text(totalCategoryItems);
+                $('#totalCategoryWeight').text(totalCategoryWeight + ' Kg');
+                $('#totalCategoryCubicWeight').text(totalCategoryCubicWeight.toFixed(2) + ' Kg');
+                $('#averageCategoryCubicWeight').text((totalCategoryCubicWeight / totalCategoryItems).toFixed(2) +
+                    ' Kg');
+            }
+        }
+
+    </script>
+</head>
+<body onload='init()'>
+<h3>Average Cubic Weight</h3>
+<div id="results">
+    <li><label for="grandTotal">Grand total of items: </label><span id="grandTotal"></span></li>
+    <li><label for="totalCategoryItems">Total items in category: </label><span id="totalCategoryItems"></span></li>
+    <li><label for="totalCategoryWeight"/>Total actual weight in category: </label><span
+            id="totalCategoryWeight"></span>
+    </li>
+    <li><label for="totalCategoryCubicWeight"/>Total cubic weight in category: </label><span
+            id="totalCategoryCubicWeight"></span></li>
+    <li><label for="averageCategoryCubicWeight"/>Average cubix weight in category: </label><span
+            id="averageCategoryCubicWeight"></span></li>
+
+</div>
+</body>
+</html>
